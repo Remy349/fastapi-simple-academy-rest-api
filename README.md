@@ -1,1 +1,1 @@
-FastAPI Simple Academy REST API
+# FastAPI Simple Academy REST API
