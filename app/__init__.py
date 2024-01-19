@@ -1,14 +1,15 @@
 from fastapi import FastAPI
+from app.core.config import settings
 
-from app.routers.category import router as category_router
+from app.categories.api.category_api import router as category_api
 
 
 def create_app() -> FastAPI:
     app = FastAPI()
 
-    app.title = "Simple Academy REST API"
-    app.version = "v1"
+    app.title = settings.API_TITLE
+    app.version = settings.API_VERSION
 
-    app.include_router(category_router, prefix="/api/v1")
+    app.include_router(category_api, prefix="/api/v1", tags=["categories"])
 
     return app
