@@ -1,13 +1,11 @@
 from fastapi.testclient import TestClient
-from app import create_app
-
-app = create_app()
+from app.main import app
 
 client = TestClient(app)
 
 
 def test_get_categories():
-    response = client.get("/v1/categories")
+    response = client.get("/api/v1/categories")
     print(response.json())
 
     assert response.status_code == 200
