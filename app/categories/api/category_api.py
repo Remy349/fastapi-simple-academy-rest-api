@@ -1,18 +1,13 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from datetime import datetime
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
+from app.categories.controller.category_controller import CategoryController
+from app.db.engine import get_db
+from app.schemas.category_schema import Category, CategoryCreate
 
 router = APIRouter()
 
-
-class Category(BaseModel):
-    id: int
-    category_name: str
-    created_at: datetime = datetime.utcnow()
-
-
-categories: list[Category] = []
+category_controller = CategoryController()
 
 
 @router.get(
@@ -20,8 +15,8 @@ categories: list[Category] = []
     status_code=HTTP_200_OK,
     response_model=list[Category],
 )
-async def get_categories():
-    return categories
+def get_categories(db: Session = Depends(get_db)):
+    return category_controller.get_categories(db)
 
 
 @router.post(
@@ -29,15 +24,8 @@ async def get_categories():
     status_code=HTTP_201_CREATED,
     response_model=Category,
 )
-async def create_category(category_data: Category):
-    category = Category(
-        id=category_data.id,
-        category_name=category_data.category_name,
-    )
-
-    categories.append(category)
-
-    return category
+def create_category(category_data: CategoryCreate, db: Session = Depends(get_db)):
+    return category_controller.create_category(db, category_data)
 
 
 @router.get(
@@ -45,12 +33,8 @@ async def create_category(category_data: Category):
     status_code=HTTP_200_OK,
     response_model=Category,
 )
-async def get_category_by_id(category_id: int):
-    for category in categories:
-        if category.id == category_id:
-            return category
-
-    raise HTTPException(status_code=404, detail="Category not found")
+def get_category_by_id(category_id: int, db: Session = Depends(get_db)):
+    return category_controller.get_category_by_id(db, category_id)
 
 
 @router.delete(
@@ -58,11 +42,5 @@ async def get_category_by_id(category_id: int):
     status_code=HTTP_204_NO_CONTENT,
     response_model=None,
 )
-async def delete_category_by_id(category_id: int):
-    for index, category in enumerate(categories):
-        if category.id == category_id:
-            categories.pop(index)
-
-            return
-
-    raise HTTPException(status_code=404, detail="Category not found")
+def delete_category(category_id: int, db: Session = Depends(get_db)):
+    return category_controller.delete_category(db, category_id)

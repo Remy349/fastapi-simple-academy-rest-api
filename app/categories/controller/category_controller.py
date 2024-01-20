@@ -1,5 +1,8 @@
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.categories.model.category_model import CategoryModel
+from app.schemas.category_schema import CategoryCreate
 
 
 class CategoryController:
@@ -7,4 +10,29 @@ class CategoryController:
         return db.query(CategoryModel).all()
 
     def get_category_by_id(self, db: Session, category_id: int):
-        return db.query(CategoryModel).filter_by(id=category_id).first()
+        category = db.query(CategoryModel).filter_by(id=category_id).first()
+
+        if category is None:
+            raise HTTPException(status_code=404, detail="Category not found")
+
+        return category
+
+    def create_category(self, db: Session, category_data: CategoryCreate):
+        category = CategoryModel(**category_data.model_dump())
+
+        try:
+            db.add(category)
+            db.commit()
+            db.refresh(category)
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="Category already registered")
+
+        return category
+
+    def delete_category(self, db: Session, category_id: int):
+        category = self.get_category_by_id(db, category_id)
+
+        db.delete(category)
+        db.commit()
+
+        return
