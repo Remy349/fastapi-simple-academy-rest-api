@@ -8,6 +8,7 @@ from alembic import context
 from app.db.engine import Base
 
 from app.categories.model.category_model import CategoryModel
+from app.courses.model.course_model import CourseModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
