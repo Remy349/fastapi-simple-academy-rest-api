@@ -7,8 +7,8 @@ class CourseBase(BaseModel):
     course_price_dollar: float
 
 
-class CreateCourse(CourseBase):
-    pass
+class CourseCreate(CourseBase):
+    category_id: int
 
 
 class Course(CourseBase):
