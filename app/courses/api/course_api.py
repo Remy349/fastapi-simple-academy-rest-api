@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from app.courses.controller.course_controller import CourseController
 from app.db.engine import get_db
-from app.schemas.course_schema import Course, CreateCourse
+from app.schemas.course_schema import Course, CourseCreate
 
 router = APIRouter()
 
@@ -24,8 +24,8 @@ def get_courses(db: Session = Depends(get_db)):
     status_code=HTTP_201_CREATED,
     response_model=Course,
 )
-def create_course(course_data: CreateCourse):
-    return
+def create_course(course_data: CourseCreate, db: Session = Depends(get_db)):
+    return course_controller.create_course(db, course_data)
 
 
 @router.get(
