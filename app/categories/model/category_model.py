@@ -1,5 +1,5 @@
 from sqlalchemy import DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from app.db.engine import Base
 
@@ -10,3 +10,10 @@ class CategoryModel(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     category_name: Mapped[str] = mapped_column(String(60), nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    courses = relationship(
+        "CourseModel",
+        back_populates="category",
+        lazy="dynamic",
+        cascade="all, delete-orphan",
+    )

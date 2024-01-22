@@ -4,6 +4,7 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from app.categories.controller.category_controller import CategoryController
 from app.db.engine import get_db
 from app.schemas.category_schema import Category, CategoryCreate
+from app.schemas.course_schema import Course
 
 router = APIRouter()
 
@@ -44,3 +45,12 @@ def get_category_by_id(category_id: int, db: Session = Depends(get_db)):
 )
 def delete_category(category_id: int, db: Session = Depends(get_db)):
     return category_controller.delete_category(db, category_id)
+
+
+@router.get(
+    "/categories/{category_id}/courses",
+    status_code=HTTP_200_OK,
+    response_model=list[Course],
+)
+def get_courses_in_category_by_id(category_id: int, db: Session = Depends(get_db)):
+    return category_controller.get_courses_in_category_by_id(db, category_id)

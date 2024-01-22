@@ -17,6 +17,11 @@ class CategoryController:
 
         return category
 
+    def get_courses_in_category_by_id(self, db: Session, category_id: int):
+        category = self.get_category_by_id(db, category_id)
+
+        return category.courses
+
     def create_category(self, db: Session, category_data: CategoryCreate):
         category = CategoryModel(**category_data.model_dump())
 
